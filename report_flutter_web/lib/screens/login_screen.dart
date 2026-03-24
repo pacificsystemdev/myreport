@@ -71,10 +71,10 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ],
                       ),
-                      child: Icon(
-                        Icons.analytics_outlined,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.primary,
+                      child: Image.asset(
+                        'assets/logo_diamond.png',
+                        width: double.infinity,
+                        height: 75,
                       ),
                     ),
                   ),
@@ -99,63 +99,73 @@ class _LoginScreenState extends State<LoginScreen>
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: _usernameController,
-                            decoration: InputDecoration(
-                              labelText: 'Username',
-                              prefixIcon: const Icon(Icons.person),
-                              border: InputBorder.none,
-                            ),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const Divider(height: 0),
-                          TextField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              prefixIcon: const Icon(Icons.lock),
-                              border: InputBorder.none,
-                            ),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _rememberMe,
-                                onChanged: (val) {
-                                  setState(() => _rememberMe = val ?? false);
-                                },
+                    child: SizedBox(
+                      width: 450,
+                      height: 320, // slightly bigger for better spacing
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                labelText: 'Username',
+                                prefixIcon: const Icon(Icons.person),
+                                border: InputBorder.none,
                               ),
-                              const Text('Remember Me'),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: _isLoading ? null : _login,
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Sign In',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
                             ),
-                          ),
-                        ],
+
+                            const Divider(),
+
+                            TextField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                prefixIcon: const Icon(Icons.lock),
+                                border: InputBorder.none,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _rememberMe,
+                                  onChanged: (val) {
+                                    setState(() => _rememberMe = val ?? false);
+                                  },
+                                ),
+                                const Text('Remember Me'),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            SizedBox(
+                              height: 50, // ✅ fixed button height
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _login,
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Sign In',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

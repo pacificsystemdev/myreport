@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:report_flutter_web/providers/logout_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 import '../providers/auth_provider.dart';
 import '../providers/reports_provider.dart';
-import '../models/models.dart';
 import 'report_screen.dart';
 
 class ReportsListScreen extends StatefulWidget {
@@ -62,9 +62,15 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.filter_list, color: Theme.of(context).colorScheme.primary),
+                Icon(
+                  Icons.filter_list,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 const SizedBox(width: 12),
-                Text('Filter Reports', style: Theme.of(context).textTheme.titleLarge),
+                Text(
+                  'Filter Reports',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -82,7 +88,9 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                   12,
                   (i) => DropdownMenuItem(
                     value: i + 1,
-                    child: Text('${DateFormat('MMM').format(DateTime(2000, i + 1))} (${i + 1})'),
+                    child: Text(
+                      '${DateFormat('MMM').format(DateTime(2000, i + 1))} (${i + 1})',
+                    ),
                   ),
                 ),
               ],
@@ -118,7 +126,10 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () async {
-                    reportsProvider.setFilter(year: selectedYear, month: selectedMonth);
+                    reportsProvider.setFilter(
+                      year: selectedYear,
+                      month: selectedMonth,
+                    );
                     Navigator.pop(context);
                     await _loadReports();
                   },
@@ -143,7 +154,9 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
       showDialog(
         context: context,
         builder: (context) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: filterContent,
         ),
       );
@@ -154,6 +167,9 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+
+        foregroundColor: Colors.white,
         title: const Text('My Reports'),
         elevation: 0,
         actions: [
@@ -165,7 +181,9 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
             builder: (context, auth, child) {
               return IconButton(
                 icon: const Icon(Icons.logout),
-                onPressed: () => auth.logout(),
+                onPressed: () {
+                  showLogoutDialog(context);
+                },
               );
             },
           ),
@@ -186,7 +204,9 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                   highlightColor: Colors.grey.shade100,
                   child: Card(
                     elevation: 2,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: ListTile(
                       leading: CircleAvatar(child: Container()),
                       title: Container(height: 16),
@@ -223,10 +243,13 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    reportsProvider.filterYear != null || reportsProvider.filterMonth != null
+                    reportsProvider.filterYear != null ||
+                            reportsProvider.filterMonth != null
                         ? 'Try adjusting your filter or create your first report'
                         : 'Get started by creating your first report',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
@@ -240,8 +263,13 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                     icon: const Icon(Icons.add),
                     label: const Text('New Report'),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ],
@@ -268,13 +296,16 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                     return Card(
                       elevation: 3,
                       margin: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReportScreen(existingReport: report),
+                            builder: (context) =>
+                                ReportScreen(existingReport: report),
                           ),
                         ),
                         child: Padding(
@@ -287,38 +318,58 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary.withOpacity(0.12),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Icon(
                                       Icons.person,
                                       size: 22,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          report.customerName.isEmpty ? 'Internal Activity' : report.customerName,
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                          report.customerName.isEmpty
+                                              ? 'Internal Activity'
+                                              : report.customerName,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
                                           _dateFormat.format(report.reportDate),
-                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(color: Colors.grey),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Text(
                                     '\$${report.customerFee.toStringAsFixed(0)}',
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).colorScheme.primary,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
                                         ),
                                   ),
                                 ],

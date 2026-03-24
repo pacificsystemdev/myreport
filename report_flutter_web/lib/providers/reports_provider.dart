@@ -38,7 +38,7 @@ class ReportsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchReports(
-    String token,
+    String accessToken,
     int userId, {
     int? year,
     int? month,
@@ -48,7 +48,7 @@ class ReportsProvider extends ChangeNotifier {
     try {
       final response = await _apiService.getReports(
         userId,
-        token,
+        accessToken,
         year: year,
         month: month,
       );

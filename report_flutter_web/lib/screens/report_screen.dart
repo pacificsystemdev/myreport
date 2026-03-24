@@ -63,16 +63,18 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Text(isEdit ? 'Edit Report' : 'New Report'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             icon: Icon(Icons.list),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ReportsListScreen()),
             ),
           ),
-          IconButton(icon: Icon(Icons.logout), onPressed: () => auth.logout()),
         ],
       ),
       body: Form(
@@ -118,9 +120,36 @@ class _ReportScreenState extends State<ReportScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _submit,
+
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 20,
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 5,
+              ),
+
               child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : Text(isEdit ? 'Update Report' : 'Submit Report'),
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                  : Text(
+                      isEdit ? 'Update Report' : 'Submit Report',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -149,10 +178,19 @@ class _ReportScreenState extends State<ReportScreen> {
 
     final data = {
       'workactivity': _workactivityController.text,
-      'workactivitywithCust': _workactivitywithCustController.text,
-      'customerName': _customerNameController.text,
-      'customerContact': _customerContactController.text,
-      'customerFee': _customerFeeController.text.trim().isEmpty ? 0 : double.tryParse(_customerFeeController.text) ?? 0,
+      'workactivitywithCust':
+          _workactivitywithCustController.text.trim().isEmpty
+          ? 'N/A'
+          : _workactivitywithCustController.text,
+      'customerName': _customerNameController.text.trim().isEmpty
+          ? 'N/A'
+          : _customerNameController.text,
+      'customerContact': _customerContactController.text.trim().isEmpty
+          ? 'N/A'
+          : _customerContactController.text,
+      'customerFee': _customerFeeController.text.trim().isEmpty
+          ? 0
+          : double.tryParse(_customerFeeController.text) ?? 0,
       'reportDate': selectedDate.toIso8601String().split('T')[0], // YYYY-MM-DD
     };
 
@@ -200,9 +238,13 @@ class _ReportScreenState extends State<ReportScreen> {
       if (response is Map && response['error'] != null) {
         errorMsg = response['error'].toString();
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Submit/Update failed${errorMsg.isNotEmpty ? ': $errorMsg' : ''}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Submit/Update failed${errorMsg.isNotEmpty ? ': $errorMsg' : ''}',
+          ),
+        ),
+      );
     }
   }
 

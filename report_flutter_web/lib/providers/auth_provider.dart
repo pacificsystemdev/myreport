@@ -11,23 +11,57 @@ class AuthProvider extends ChangeNotifier {
   User? get user => _user;
   bool get isLoggedIn => _user != null;
   bool get rememberMe => _rememberMe;
-
   Future<void> tryAutoLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getBool('rememberMe') ?? false;
-    if (!saved) return;
-    final userId = prefs.getInt('userId');
-    final username = prefs.getString('username');
-    final role = prefs.getString('role');
-    final token = prefs.getString('token');
-    if (userId != null && username != null && role != null && token != null) {
-      _user = User(userId: userId, username: username, role: role, token: token);
-      _rememberMe = true;
-      notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final token = prefs.getString('token'); // ✅ FIXED
+
+      if (token != null && token.isNotEmpty) {
+        _user = User(
+          userId: prefs.getInt('userId') ?? 0,
+          username: prefs.getString('username') ?? 'auto',
+          role: prefs.getString('role') ?? 'user',
+          token: token,
+        );
+
+        _rememberMe = true;
+        notifyListeners();
+        return;
+      }
+
+      // Optional: try refresh if token exists but expired
+      if (token != null) {
+        final response = await _apiService.refreshToken(token); // ✅ FIXED
+
+        if (response['success']) {
+          final userId = response['userId'];
+          final newToken = response['accessToken']; // ✅ FIXED
+
+          await prefs.setString('token', newToken);
+          await prefs.setInt('userId', userId);
+
+          _user = User(
+            userId: userId,
+            username: 'auto',
+            role: 'user',
+            token: newToken,
+          );
+
+          _rememberMe = true;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print("Auto login error: $e");
     }
   }
 
-  Future<bool> login(String username, String password, {bool rememberMe = false}) async {
+  Future<bool> login(
+    String username,
+    String password, {
+    bool rememberMe = false,
+  }) async {
     try {
       final response = await _apiService.login(username, password);
       if (response['success']) {
@@ -51,8 +85,11 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       }
+      print('Login failed: success field is false');
       return false;
-    } catch (e) {
+    } catch (e, stack) {
+      print('Login exception: ' + e.toString());
+      print(stack);
       return false;
     }
   }
@@ -66,6 +103,7 @@ class AuthProvider extends ChangeNotifier {
     await prefs.remove('username');
     await prefs.remove('role');
     await prefs.remove('token');
+    await prefs.clear();
     notifyListeners();
   }
 }

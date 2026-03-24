@@ -13,10 +13,10 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      userId: json['userId'] ?? 0,
+      userId: int.tryParse(json['userId'].toString()) ?? 0,
       username: json['username'] ?? '',
       role: json['role'] ?? '',
-      token: json['token'] ?? '',
+      token: json['accessToken'] ?? json['token'] ?? '',
     );
   }
 }
@@ -54,21 +54,27 @@ class Report {
       }
     }
 
-    double parseFee(dynamic fee) {
-      if (fee == null) return 0.0;
-      return double.tryParse(fee.toString()) ?? 0.0;
-    }
-
     return Report(
-      reportId: json['reportId'] ?? 0,
-      userId: (json['UserID'] ?? 0) as int,
+      reportId:
+          int.tryParse(
+            json['reportId']?.toString() ??
+                json['ReportID']?.toString() ??
+                json['ReportId']?.toString() ??
+                '',
+          ) ??
+          0,
+      userId:
+          int.tryParse(
+            json['UserID']?.toString() ?? json['userId']?.toString() ?? '',
+          ) ??
+          0,
       workactivity: json['workactivity']?.toString() ?? '',
       workactivitywithCust: json['workactivitywithCust']?.toString() ?? '',
       customerName: json['customerName']?.toString() ?? '',
       customerContact: json['customerContact']?.toString() ?? '',
-      customerFee: parseFee(json['customerFee']),
-      reportDate: parseDate(json['ReportDate']),
-      createDate: parseDate(json['CreateDate']),
+      customerFee: double.tryParse(json['customerFee']?.toString() ?? '0') ?? 0,
+      reportDate: parseDate(json['ReportDate'] ?? json['reportDate']),
+      createDate: parseDate(json['CreateDate'] ?? json['createDate']),
     );
   }
 
